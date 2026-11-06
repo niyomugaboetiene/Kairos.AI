@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Prediction = () => {
   const [image, setImage] = useState(null);
@@ -36,11 +37,15 @@ const Prediction = () => {
         formData
       );
 
+      if (response.data === "") {
+          alert("Failed to detect image select another")
+      }
+
       setResult(response.data[0]);
       console.log(response.data);
     } catch (err) {
       console.error(err);
-      alert("Error connecting to the ML model. Please check your backend.");
+      alert("Failed to connect to model.");
     } finally {
       setIsLoading(false);
     }
@@ -59,6 +64,7 @@ const Prediction = () => {
             Face Recognition App
           </h1>
           <p className="text-gray-400 text-lg">Upload an image and let our AI identify the person.</p>
+          <p className="text-gray-400 text-lg"><span className="font-bold">NB:</span> Choose between Lionel messi, Marie Sharapova, Roger Federer, Selena williams or virat kohli.</p>
         </div>
 
         <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-8 md:p-12">
@@ -138,6 +144,9 @@ const Prediction = () => {
             </div>
           )}
         </div>
+           <div className="mt-5">
+              <Link to={'/'} className="bg-red-200 cursor-pointer hover:bg-red-400 transition-colors py-2 px-6">Back</Link>
+          </div>
       </div>
 
       <div className="absolute bottom-6 w-full text-center text-gray-600 text-sm">

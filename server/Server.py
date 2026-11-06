@@ -6,9 +6,9 @@ app = Flask(__name__)
 
 CORS(app)
 
-# @app.route('/hello')
-# def hello():
-#     return "Hi"
+@app.route('/')
+def hello():
+    return "Hi"
 @app.route('/classify_image', methods = ['GET', 'POST'])
 def classify_image():
     image_data = request.form['image_data']

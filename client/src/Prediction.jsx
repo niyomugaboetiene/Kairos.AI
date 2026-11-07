@@ -15,8 +15,7 @@ import {
 } from "react-icons/fa";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
-BACKEND_URL = import.meta.env.BACKEND_URL;
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/jpg"];
 
 const Prediction = () => {

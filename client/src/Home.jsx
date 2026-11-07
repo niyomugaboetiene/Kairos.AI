@@ -68,11 +68,9 @@ export default function Header() {
   return (
     <main className="min-h-screen bg-[#f7f8fa] text-slate-900 overflow-hidden">
 
-      {/* NAVBAR */}
       <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 h-20 flex items-center justify-between">
 
-          {/* LOGO */}
           <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-[#102c4a] flex items-center justify-center">
               <FaShieldAlt className="text-white text-xl" />
@@ -83,7 +81,6 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* DESKTOP NAVIGATION */}
           <nav className="hidden md:flex items-center gap-7 lg:gap-10">
             <a
               href="#about"

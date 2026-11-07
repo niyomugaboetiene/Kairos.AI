@@ -45,7 +45,6 @@ const AboutUs = () => {
   return (
     <main className="min-h-screen bg-white text-slate-800">
 
-      {/* Hero Section */}
       <section className="relative overflow-hidden bg-[#102c4a] px-6 py-24 text-white md:py-32">
         <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-blue-400/10 blur-3xl" />
         <div className="absolute -bottom-32 -left-20 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl" />
@@ -76,7 +75,6 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Introduction */}
       <section className="px-6 py-20 md:py-28">
         <div className="mx-auto grid max-w-6xl items-center gap-14 md:grid-cols-2">
           <div>
@@ -140,7 +138,6 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Mission and Approach */}
       <section className="bg-slate-50 px-6 py-20 md:py-24">
         <div className="mx-auto max-w-6xl">
           <div className="max-w-2xl">
@@ -263,12 +260,10 @@ const AboutUs = () => {
         </div>
       </section>
 
-{/* Creator Section */}
 <section className="bg-slate-50 px-6 py-20 md:py-24">
   <div className="mx-auto max-w-6xl">
     <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white md:grid md:grid-cols-5">
 
-      {/* Creator Image */}
       <div className="relative min-h-[350px] overflow-hidden bg-[#102c4a] md:col-span-2 md:min-h-full">
         <img
           src={Creator}
@@ -277,7 +272,6 @@ const AboutUs = () => {
         />
       </div>
 
-      {/* Creator Information */}
       <div className="p-8 md:col-span-3 md:p-12">
         <p className="text-sm font-semibold uppercase tracking-widest text-blue-700">
           The Person Behind The Project
@@ -314,7 +308,6 @@ const AboutUs = () => {
   </div>
 </section>
 
-      {/* Project Scope */}
       <section className="px-6 py-16">
         <div className="mx-auto max-w-6xl rounded-xl border border-blue-100 bg-blue-50/60 p-7 md:p-10">
           <div className="flex items-start gap-4">
@@ -337,7 +330,6 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Final CTA */}
       <section className="bg-[#102c4a] px-6 py-20 text-center text-white">
         <div className="mx-auto max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-widest text-blue-300">

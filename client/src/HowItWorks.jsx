@@ -66,15 +66,11 @@ export default function HowItWorks() {
   return (
     <main className="min-h-screen bg-[#f7f8fa] text-slate-900 overflow-hidden">
 
-      {/* HOW IT WORKS SECTION */}
       <section className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 py-16 md:py-24">
 
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-14 lg:gap-20">
 
-          {/* IMAGE SECTION */}
           <div className="relative max-w-xl w-full mx-auto lg:mx-0">
-
-            {/* MAIN IMAGE */}
             <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg shadow-slate-900/5">
               <img
                 src={Image1}
@@ -83,7 +79,6 @@ export default function HowItWorks() {
               />
             </div>
 
-            {/* SECONDARY IMAGE */}
             <div className="relative sm:absolute sm:-bottom-12 sm:-right-8 w-[85%] sm:w-[65%] mx-auto sm:mx-0 -mt-10 sm:mt-0 rounded-xl overflow-hidden border-4 border-white shadow-xl">
               <img
                 src={Image2}
@@ -92,7 +87,6 @@ export default function HowItWorks() {
               />
             </div>
 
-            {/* IMAGE CAPTION */}
             <div className="hidden sm:flex absolute top-7 -left-4 bg-white rounded-lg shadow-md border border-slate-100 p-4 items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-[#edf3f8] flex items-center justify-center text-[#28577f]">
                 <FaUserCheck className="text-lg" />
@@ -110,7 +104,6 @@ export default function HowItWorks() {
 
           </div>
 
-          {/* STEPS SECTION */}
           <div className="pt-4 lg:pt-0">
 
             <span className="text-xs font-bold tracking-[2px] text-[#35658e] uppercase">
@@ -127,7 +120,6 @@ export default function HowItWorks() {
               recognition process.
             </p>
 
-            {/* STEPS */}
             <div className="mt-10 space-y-5">
 
               {steps.map((step) => (
@@ -140,7 +132,6 @@ export default function HowItWorks() {
                   }`}
                 >
 
-                  {/* NUMBER */}
                   <div
                     className={`w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-lg flex items-center justify-center text-lg font-bold ${
                       step.active
@@ -151,7 +142,6 @@ export default function HowItWorks() {
                     {step.number}
                   </div>
 
-                  {/* DESCRIPTION */}
                   <div>
                     <h3
                       className={`text-lg sm:text-xl font-bold ${
@@ -177,12 +167,10 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      {/* PRIVACY SECTION */}
       <section className="bg-white border-y border-slate-200 py-20 md:py-24">
 
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">
 
-          {/* SECTION HEADING */}
           <div className="max-w-2xl mx-auto text-center mb-14">
 
             <div className="w-14 h-14 bg-[#edf3f8] rounded-xl flex items-center justify-center text-[#28577f] text-2xl mx-auto mb-5">
@@ -205,7 +193,6 @@ export default function HowItWorks() {
 
           </div>
 
-          {/* PRIVACY CARDS */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
             {privacyFeatures.map((feature, index) => (
@@ -231,7 +218,6 @@ export default function HowItWorks() {
 
           </div>
 
-          {/* PRIVACY NOTE */}
           <div className="mt-10 flex flex-col sm:flex-row gap-4 items-start bg-[#f1f5f9] border border-slate-200 rounded-xl p-6">
 
             <FaShieldAlt className="text-[#28577f] text-xl mt-1 shrink-0" />
@@ -254,7 +240,6 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      {/* CALL TO ACTION */}
       <section className="bg-[#102c4a] py-20 md:py-24">
 
         <div className="max-w-5xl mx-auto px-5 sm:px-8 text-center">
@@ -294,7 +279,6 @@ export default function HowItWorks() {
         </div>
       </section>
 
-      {/* FOOTER */}
       <footer className="bg-[#0b2035] py-8">
 
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 flex flex-col md:flex-row justify-between items-center gap-5">

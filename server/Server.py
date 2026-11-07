@@ -6,7 +6,6 @@ app = Flask(__name__)
 
 CORS(app)
 
-# Load the trained model when Gunicorn imports this application.
 try:
     util.load_saved_artifaces()
     print("KAIROS AI model loaded successfully!")

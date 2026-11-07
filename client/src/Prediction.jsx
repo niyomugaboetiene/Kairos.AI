@@ -1,157 +1,550 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import {
+  FaCloudUploadAlt,
+  FaImage,
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaTimesCircle,
+  FaArrowLeft,
+  FaShieldAlt,
+  FaUserCheck,
+  FaRedo,
+  FaSpinner,
+} from "react-icons/fa";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/jpg"];
 
 const Prediction = () => {
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState("");
   const [result, setResult] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
+
     if (!file) return;
 
+    setResult(null);
+    setError("");
+    setImage(null);
+    setPreview("");
+
+    // Check file type
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      setError("Unsupported file format. Please upload a JPG or PNG image.");
+      e.target.value = "";
+      return;
+    }
+
+    // Check file size
+    if (file.size > MAX_FILE_SIZE) {
+      setError("File is too large. Please select an image smaller than 5 MB.");
+      e.target.value = "";
+      return;
+    }
+
     setImage(file);
-    setResult(null); 
+
     const reader = new FileReader();
+
     reader.onloadend = () => {
       setPreview(reader.result);
     };
+
+    reader.onerror = () => {
+      setError("Unable to read this image. Please choose another file.");
+      setImage(null);
+    };
+
     reader.readAsDataURL(file);
   };
 
+  const resetForm = () => {
+    setImage(null);
+    setPreview("");
+    setResult(null);
+    setError("");
+
+    const fileInput = document.getElementById("file-upload");
+
+    if (fileInput) {
+      fileInput.value = "";
+    }
+  };
+
   const classifyImage = async () => {
-    if (!image) {
-      alert("Please select an image first!");
+    if (!image || !preview) {
+      setError("Please select an image before starting verification.");
       return;
     }
 
     setIsLoading(true);
+    setError("");
+    setResult(null);
+
     try {
       const formData = new FormData();
+
       formData.append("image_data", preview);
 
       const response = await axios.post(
         "http://127.0.0.1:5000/classify_image",
-        formData
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          timeout: 30000,
+        }
       );
 
-      if (response.data === "") {
-          alert("Failed to detect image select another")
+      const data = response.data;
+
+      // Handle empty response
+      if (
+        !data ||
+        (Array.isArray(data) && data.length === 0) ||
+        data === ""
+      ) {
+        setError(
+          "No identification result was returned. Please try another image."
+        );
+        return;
       }
 
-      setResult(response.data[0]);
-      console.log(response.data);
+      // Your current API returns an array, so use its first item.
+      const prediction = Array.isArray(data) ? data[0] : data;
+
+      if (!prediction || typeof prediction !== "object") {
+        setError("The verification service returned an invalid response.");
+        return;
+      }
+
+      const detectedClass = prediction.class;
+
+      // Handle no face detected
+      if (
+        !detectedClass ||
+        detectedClass.toLowerCase() === "no face detected"
+      ) {
+        setResult({
+          status: "no-face",
+          message: "No face detected",
+          description:
+            "We could not detect a recognizable face in this image. Try a clear, front-facing photo.",
+        });
+        return;
+      }
+
+      // Handle unknown face
+      if (
+        detectedClass.toLowerCase() === "unknown" ||
+        detectedClass.toLowerCase() === "unknown face"
+      ) {
+        setResult({
+          status: "unknown",
+          message: "Unknown Face",
+          description:
+            "The uploaded face does not match any of the identities supported by this model.",
+        });
+        return;
+      }
+
+      // Successful identification
+      setResult({
+        status: "success",
+        message: detectedClass,
+        description: "The model returned a matching identity.",
+        confidence: prediction.confidence,
+      });
+
     } catch (err) {
-      console.error(err);
-      alert("Failed to connect to model.");
+      console.error("Classification error:", err);
+
+      if (err.code === "ECONNABORTED") {
+        setError(
+          "The verification request timed out. Please try again."
+        );
+      } else if (err.response) {
+        setError(
+          err.response.data?.message ||
+          "The server could not process your image. Please try again."
+        );
+      } else {
+        setError(
+          "Unable to connect to the verification server. Check your connection and try again."
+        );
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="relative w-full min-h-screen bg-[#0a0a10] overflow-hidden flex items-center justify-center">
-      <div className="absolute top-[-15%] left-[-10%] w-[700px] h-[700px] bg-gradient-to-br from-purple-600/30 to-blue-600/20 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute bottom-[-15%] right-[-10%] w-[600px] h-[600px] bg-gradient-to-tl from-pink-600/30 to-rose-500/20 rounded-full blur-[100px] pointer-events-none"></div>
-      <div className="absolute top-[50%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+    <div className="min-h-screen bg-slate-50 text-slate-800">
 
-      <div className="relative z-10 w-full max-w-4xl mx-4 p-6">
-        
-        <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-3">
-            Face Recognition App
-          </h1>
-          <p className="text-gray-400 text-lg">Upload an image and let our AI identify the person.</p>
-          <p className="text-gray-400 text-lg"><span className="font-bold">NB:</span> Choose between Lionel messi, Marie Sharapova, Roger Federer, Selena williams or virat kohli.</p>
+      {/* Navigation */}
+      <nav className="bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 py-4 flex items-center justify-between">
+
+          <Link to="/" className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-[#102c4a] rounded-lg flex items-center justify-center">
+              <FaShieldAlt className="text-white text-lg" />
+            </div>
+
+            <div>
+              <h1 className="text-xl font-bold tracking-wide text-[#102c4a]">
+                KAIROS
+              </h1>
+              <p className="text-[10px] tracking-[2px] text-slate-500 uppercase">
+                Identity Solutions
+              </p>
+            </div>
+          </Link>
+
+          <Link
+            to="/"
+            className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-[#35658e] transition"
+          >
+            <FaArrowLeft />
+            <span className="hidden sm:inline">Back to Home</span>
+          </Link>
+
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main className="max-w-6xl mx-auto px-5 sm:px-8 py-12 md:py-16">
+
+        {/* Page Heading */}
+        <div className="max-w-2xl mx-auto text-center mb-10">
+
+          <div className="inline-flex items-center gap-2 bg-blue-50 text-[#35658e] px-4 py-2 rounded-full text-xs font-semibold tracking-wide mb-5">
+            <FaShieldAlt />
+            IDENTITY VERIFICATION PORTAL
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#102c4a] tracking-tight mb-4">
+            Face Recognition
+            <span className="block text-[#35658e]">
+              Verification
+            </span>
+          </h2>
+
+          <p className="text-slate-500 leading-relaxed text-sm sm:text-base">
+            Upload a clear image to check whether the face matches
+            one of the identities supported by the KAIROS model.
+          </p>
+
         </div>
 
-        <div className="bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl p-8 md:p-12">
-          
-          <div className="flex flex-col items-center justify-center w-full mb-8">
-            <label 
+        {/* Supported Identities */}
+        <div className="max-w-3xl mx-auto mb-8 bg-white border border-slate-200 rounded-xl p-5">
+
+          <div className="flex items-center gap-3 mb-4">
+            <FaUserCheck className="text-[#35658e] text-lg" />
+
+            <h3 className="font-semibold text-[#102c4a]">
+              Supported identities
+            </h3>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {[
+              "Lionel Messi",
+              "Maria Sharapova",
+              "Roger Federer",
+              "Serena Williams",
+              "Virat Kohli",
+            ].map((person) => (
+              <span
+                key={person}
+                className="bg-slate-100 border border-slate-200 text-slate-600 px-3 py-2 rounded-lg text-xs sm:text-sm"
+              >
+                {person}
+              </span>
+            ))}
+          </div>
+
+          <p className="text-xs text-slate-400 mt-3">
+            The model is limited to these five trained identity classes.
+          </p>
+
+        </div>
+
+        {/* Verification Card */}
+        <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+
+          <div className="border-b border-slate-200 px-6 sm:px-8 py-5">
+            <h3 className="text-lg font-bold text-[#102c4a]">
+              Upload Image
+            </h3>
+
+            <p className="text-sm text-slate-500 mt-1">
+              Select an image file to begin the verification process.
+            </p>
+          </div>
+
+          <div className="p-6 sm:p-8">
+
+            {/* Upload Area */}
+            <label
               htmlFor="file-upload"
-              className="w-full flex flex-col items-center justify-center h-48 border-2 border-dashed border-gray-600 rounded-2xl cursor-pointer hover:border-purple-400 transition-colors duration-300 bg-white/5 hover:bg-white/10"
+              className="group flex flex-col items-center justify-center w-full min-h-48 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer bg-slate-50 hover:bg-blue-50 hover:border-[#35658e] transition-all duration-200 px-5 py-8 text-center"
             >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg className="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                </svg>
-                <p className="mb-2 text-sm text-gray-400"><span className="font-semibold text-white">Click to upload</span> or drag and drop</p>
-                <p className="text-xs text-gray-500">PNG, JPG, JPEG (MAX. 5MB)</p>
+              <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mb-4 group-hover:bg-blue-200 transition">
+                <FaCloudUploadAlt className="text-2xl text-[#35658e]" />
               </div>
-              <input 
-                id="file-upload" 
-                type="file" 
-                accept="image/*"
+
+              <p className="font-semibold text-[#102c4a] mb-2">
+                Choose an image to upload
+              </p>
+
+              <p className="text-sm text-slate-500">
+                Click here to browse your device
+              </p>
+
+              <p className="text-xs text-slate-400 mt-3">
+                Accepted formats: JPG, JPEG, PNG · Maximum size: 5 MB
+              </p>
+
+              <input
+                id="file-upload"
+                type="file"
+                accept="image/jpeg,image/png,image/jpg"
                 className="hidden"
                 onChange={handleFileChange}
               />
             </label>
-          </div>
 
-          {preview && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-6">
-              
-              <div className="relative group">
-                <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur opacity-30 group-hover:opacity-60 transition duration-1000"></div>
-                <img 
-                  src={preview} 
-                  alt="Preview" 
-                  className="relative rounded-2xl w-full h-64 md:h-72 object-cover shadow-lg border border-white/10"
-                />
+            {/* Error Message */}
+            {error && (
+              <div className="mt-5 flex items-start gap-3 bg-red-50 border border-red-200 rounded-lg p-4">
+                <FaExclamationTriangle className="text-red-500 mt-1 shrink-0" />
+
+                <div>
+                  <p className="font-semibold text-red-700 text-sm">
+                    Verification Error
+                  </p>
+
+                  <p className="text-sm text-red-600 mt-1">
+                    {error}
+                  </p>
+                </div>
               </div>
+            )}
 
-              <div className="flex flex-col justify-between h-full gap-6">
-                
-                <button 
-                  onClick={classifyImage} 
-                  disabled={isLoading}
-                  className={`w-full py-4 rounded-xl font-bold text-white transition-all duration-300 shadow-lg 
-                    ${isLoading 
-                      ? 'bg-gray-600 cursor-not-allowed' 
-                      : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:scale-[1.02] hover:shadow-purple-500/40'
-                    }`}
+            {/* Image Preview */}
+            {preview && (
+              <div className="mt-7">
+
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="font-semibold text-[#102c4a]">
+                    Selected Image
+                  </h4>
+
+                  <button
+                    onClick={resetForm}
+                    type="button"
+                    className="text-sm text-red-500 hover:text-red-700 font-medium"
+                  >
+                    Remove image
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-7 items-center">
+
+                  {/* Image */}
+                  <div className="bg-slate-100 rounded-xl border border-slate-200 p-2">
+                    <img
+                      src={preview}
+                      alt="Selected face"
+                      className="w-full h-64 object-contain rounded-lg"
+                    />
+                  </div>
+
+                  {/* Image Information */}
+                  <div className="space-y-5">
+
+                    <div>
+                      <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold mb-2">
+                        File Information
+                      </p>
+
+                      <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+                        <div className="flex items-center gap-3">
+                          <FaImage className="text-[#35658e] text-xl" />
+
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-slate-700 truncate">
+                              {image?.name}
+                            </p>
+
+                            <p className="text-xs text-slate-400 mt-1">
+                              {image
+                                ? (image.size / (1024 * 1024)).toFixed(2) + " MB"
+                                : ""}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={classifyImage}
+                      disabled={isLoading}
+                      className={`w-full flex items-center justify-center gap-3 py-3.5 px-5 rounded-lg font-semibold text-white transition-all duration-200 ${
+                        isLoading
+                          ? "bg-slate-400 cursor-not-allowed"
+                          : "bg-[#102c4a] hover:bg-[#1b456b] shadow-sm"
+                      }`}
+                    >
+                      {isLoading ? (
+                        <>
+                          <FaSpinner className="animate-spin" />
+                          Processing Image...
+                        </>
+                      ) : (
+                        <>
+                          <FaUserCheck />
+                          Verify Identity
+                        </>
+                      )}
+                    </button>
+
+                    <p className="text-xs text-slate-400 text-center">
+                      Please use a clear, well-lit, front-facing image.
+                    </p>
+
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Result */}
+            {result && (
+              <div className="mt-8">
+
+                {result.status === "success" ? (
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6">
+
+                    <div className="flex items-center gap-3 mb-3">
+                      <FaCheckCircle className="text-emerald-600 text-xl" />
+
+                      <p className="text-sm font-semibold text-emerald-700 uppercase tracking-wide">
+                        Identification Result
+                      </p>
+                    </div>
+
+                    <h3 className="text-2xl sm:text-3xl font-bold text-[#102c4a]">
+                      {result.message}
+                    </h3>
+
+                    <p className="text-sm text-emerald-700 mt-2">
+                      {result.description}
+                    </p>
+
+                    {result.confidence !== undefined && (
+                      <p className="text-sm text-slate-600 mt-3">
+                        Confidence: {result.confidence}
+                      </p>
+                    )}
+
+                  </div>
+                ) : (
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-6">
+
+                    <div className="flex items-center gap-3 mb-3">
+                      <FaTimesCircle className="text-amber-600 text-xl" />
+
+                      <p className="text-sm font-semibold text-amber-700 uppercase tracking-wide">
+                        {result.message}
+                      </p>
+                    </div>
+
+                    <p className="text-sm text-amber-700">
+                      {result.description}
+                    </p>
+
+                  </div>
+                )}
+
+                <button
+                  onClick={resetForm}
+                  className="mt-5 flex items-center justify-center gap-2 text-sm font-semibold text-[#35658e] hover:text-[#102c4a] transition"
                 >
-                  {isLoading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      Analyzing...
-                    </span>
-                  ) : "🚀 Identify Person"}
+                  <FaRedo />
+                  Verify Another Image
                 </button>
 
-                {result && (
-                  <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/10 backdrop-blur-lg border border-green-500/30 rounded-xl p-5 text-center animate-fadeIn">
-                    <p className="text-sm text-green-300 uppercase tracking-wider font-semibold mb-1">Detection Successful</p>
-                    <h2 className="text-3xl font-bold text-white">
-                      {result.class || "Unknown"}
-                    </h2>
-                    <div className="mt-3 h-1 w-20 mx-auto bg-gradient-to-r from-green-400 to-emerald-400 rounded-full"></div>
-                  </div>
-                )}
-
-                {!result && (
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-5 text-center border-dashed">
-                    <p className="text-gray-500 text-sm">Waiting for prediction...</p>
-                  </div>
-                )}
               </div>
-            </div>
-          )}
-        </div>
-           <div className="mt-5">
-              <Link to={'/'} className="bg-red-200 cursor-pointer hover:bg-red-400 transition-colors py-2 px-6">Back</Link>
-          </div>
-      </div>
+            )}
 
-      <div className="absolute bottom-6 w-full text-center text-gray-600 text-sm">
-        Powered by KAIROS • Developed by Niyomugabo Etiene
-      </div>
+          </div>
+        </div>
+
+        {/* Guidelines */}
+        <div className="max-w-3xl mx-auto mt-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
+
+          <div className="bg-white border border-slate-200 rounded-xl p-4">
+            <FaImage className="text-[#35658e] text-lg mb-3" />
+            <h4 className="font-semibold text-sm text-[#102c4a]">
+              Clear Image
+            </h4>
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+              Use a photo where the face is clearly visible.
+            </p>
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-xl p-4">
+            <FaShieldAlt className="text-[#35658e] text-lg mb-3" />
+            <h4 className="font-semibold text-sm text-[#102c4a]">
+              File Validation
+            </h4>
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+              Only supported image formats under 5 MB are accepted.
+            </p>
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-xl p-4">
+            <FaUserCheck className="text-[#35658e] text-lg mb-3" />
+            <h4 className="font-semibold text-sm text-[#102c4a]">
+              Model Results
+            </h4>
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+              Results depend on the identities and data used to train the model.
+            </p>
+          </div>
+
+        </div>
+
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t border-slate-200 bg-white py-6">
+        <div className="max-w-7xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+
+          <p className="text-sm font-bold tracking-wide text-[#102c4a]">
+            KAIROS
+          </p>
+
+          <p className="text-xs text-slate-400 text-center">
+            Developed by Niyomugabo Etiene
+          </p>
+
+          <p className="text-xs text-slate-400">
+            © {new Date().getFullYear()} KAIROS. All rights reserved.
+          </p>
+
+        </div>
+      </footer>
+
     </div>
   );
 };

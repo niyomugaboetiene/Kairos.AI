@@ -15,6 +15,7 @@ import {
 } from "react-icons/fa";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
+BACKEND_URL = import.meta.env.BACKEND_URL;
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/jpg"];
 
@@ -92,7 +93,7 @@ const Prediction = () => {
       formData.append("image_data", preview);
 
       const response = await axios.post(
-        "http://127.0.0.1:5000/classify_image",
+        `${BACKEND_URL}/classify_image`,
         formData,
         {
           headers: {

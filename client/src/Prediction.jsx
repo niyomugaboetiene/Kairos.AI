@@ -35,14 +35,12 @@ const Prediction = () => {
     setImage(null);
     setPreview("");
 
-    // Check file type
     if (!ALLOWED_TYPES.includes(file.type)) {
       setError("Unsupported file format. Please upload a JPG or PNG image.");
       e.target.value = "";
       return;
     }
 
-    // Check file size
     if (file.size > MAX_FILE_SIZE) {
       setError("File is too large. Please select an image smaller than 5 MB.");
       e.target.value = "";
@@ -106,7 +104,6 @@ const Prediction = () => {
 
       const data = response.data;
 
-      // Handle empty response
       if (
         !data ||
         (Array.isArray(data) && data.length === 0) ||
@@ -118,7 +115,6 @@ const Prediction = () => {
         return;
       }
 
-      // Your current API returns an array, so use its first item.
       const prediction = Array.isArray(data) ? data[0] : data;
 
       if (!prediction || typeof prediction !== "object") {
@@ -128,7 +124,6 @@ const Prediction = () => {
 
       const detectedClass = prediction.class;
 
-      // Handle no face detected
       if (
         !detectedClass ||
         detectedClass.toLowerCase() === "no face detected"
@@ -142,7 +137,6 @@ const Prediction = () => {
         return;
       }
 
-      // Handle unknown face
       if (
         detectedClass.toLowerCase() === "unknown" ||
         detectedClass.toLowerCase() === "unknown face"
@@ -189,7 +183,6 @@ const Prediction = () => {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
 
-      {/* Navigation */}
       <nav className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 py-4 flex items-center justify-between">
 
@@ -219,10 +212,8 @@ const Prediction = () => {
         </div>
       </nav>
 
-      {/* Main Content */}
       <main className="max-w-6xl mx-auto px-5 sm:px-8 py-12 md:py-16">
 
-        {/* Page Heading */}
         <div className="max-w-2xl mx-auto text-center mb-10">
 
           <div className="inline-flex items-center gap-2 bg-blue-50 text-[#35658e] px-4 py-2 rounded-full text-xs font-semibold tracking-wide mb-5">
@@ -244,7 +235,6 @@ const Prediction = () => {
 
         </div>
 
-        {/* Supported Identities */}
         <div className="max-w-3xl mx-auto mb-8 bg-white border border-slate-200 rounded-xl p-5">
 
           <div className="flex items-center gap-3 mb-4">
@@ -278,7 +268,6 @@ const Prediction = () => {
 
         </div>
 
-        {/* Verification Card */}
         <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
 
           <div className="border-b border-slate-200 px-6 sm:px-8 py-5">
@@ -293,7 +282,6 @@ const Prediction = () => {
 
           <div className="p-6 sm:p-8">
 
-            {/* Upload Area */}
             <label
               htmlFor="file-upload"
               className="group flex flex-col items-center justify-center w-full min-h-48 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer bg-slate-50 hover:bg-blue-50 hover:border-[#35658e] transition-all duration-200 px-5 py-8 text-center"
@@ -323,7 +311,6 @@ const Prediction = () => {
               />
             </label>
 
-            {/* Error Message */}
             {error && (
               <div className="mt-5 flex items-start gap-3 bg-red-50 border border-red-200 rounded-lg p-4">
                 <FaExclamationTriangle className="text-red-500 mt-1 shrink-0" />
@@ -340,7 +327,6 @@ const Prediction = () => {
               </div>
             )}
 
-            {/* Image Preview */}
             {preview && (
               <div className="mt-7">
 
@@ -360,7 +346,6 @@ const Prediction = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-7 items-center">
 
-                  {/* Image */}
                   <div className="bg-slate-100 rounded-xl border border-slate-200 p-2">
                     <img
                       src={preview}
@@ -369,7 +354,6 @@ const Prediction = () => {
                     />
                   </div>
 
-                  {/* Image Information */}
                   <div className="space-y-5">
 
                     <div>
@@ -427,7 +411,6 @@ const Prediction = () => {
               </div>
             )}
 
-            {/* Result */}
             {result && (
               <div className="mt-8">
 
@@ -489,7 +472,6 @@ const Prediction = () => {
           </div>
         </div>
 
-        {/* Guidelines */}
         <div className="max-w-3xl mx-auto mt-7 grid grid-cols-1 sm:grid-cols-3 gap-4">
 
           <div className="bg-white border border-slate-200 rounded-xl p-4">
@@ -526,7 +508,6 @@ const Prediction = () => {
 
       </main>
 
-      {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-6">
         <div className="max-w-7xl mx-auto px-5 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
 

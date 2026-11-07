@@ -8,11 +8,11 @@ const Entry = () => {
            <section id="home">
                 <Home />
            </section>
-           <section id="home">
-                <HowItWorks />
-           </section>
            <section id="about">
                 <AboutUs />
+           </section>
+            <section id="home">
+                <HowItWorks />
            </section>
         </>
     )

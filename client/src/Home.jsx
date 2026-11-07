@@ -114,7 +114,6 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* MOBILE MENU BUTTON */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden text-2xl text-[#102c4a] p-2"
@@ -125,7 +124,6 @@ export default function Header() {
           </button>
         </div>
 
-        {/* MOBILE NAVIGATION */}
         {menuOpen && (
           <nav className="md:hidden bg-white border-t border-slate-200 px-6 py-5 flex flex-col">
             <a
@@ -151,9 +149,16 @@ export default function Header() {
             >
               Features
             </a>
+            <a
+              href="#about"
+              onClick={() => setMenuOpen(false)}
+              className="py-3 border-b border-slate-100 font-semibold text-slate-700"
+            >
+              About
+            </a>
 
             <Link
-              to="/login"
+              to="#"
               onClick={() => setMenuOpen(false)}
               className="mt-4 bg-[#102c4a] text-white text-center py-3 rounded-lg font-semibold"
             >
@@ -163,14 +168,12 @@ export default function Header() {
         )}
       </header>
 
-      {/* HERO SECTION */}
       <section
         id="about"
         className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10 py-16 md:py-24 lg:py-28"
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-14 lg:gap-20">
 
-          {/* HERO TEXT */}
           <div className="max-w-2xl">
 
             <span className="inline-block text-xs sm:text-sm font-bold tracking-[2px] text-[#35658e] uppercase mb-6">
@@ -191,7 +194,6 @@ export default function Header() {
               control, and simplify everyday security operations.
             </p>
 
-            {/* ACTIONS */}
             <div className="flex flex-col sm:flex-row gap-4 mt-9">
 
               <Link
@@ -210,7 +212,6 @@ export default function Header() {
               </a>
             </div>
 
-            {/* TRUST POINTS */}
             <div className="flex flex-col sm:flex-row flex-wrap gap-5 sm:gap-7 mt-9 text-sm text-slate-500">
 
               <span className="flex items-center gap-2">
@@ -226,7 +227,6 @@ export default function Header() {
             </div>
           </div>
 
-          {/* HERO IMAGE */}
           <div className="relative max-w-xl mx-auto w-full lg:max-w-none">
 
             <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl shadow-slate-900/5">
@@ -237,7 +237,6 @@ export default function Header() {
               />
             </div>
 
-            {/* PROFILE CARD */}
             <div className="relative sm:absolute sm:-bottom-8 sm:-right-5 bg-white border border-slate-200 rounded-xl p-5 shadow-lg w-[92%] sm:w-[260px] mx-auto sm:mx-0 -mt-8 sm:mt-0">
 
               <div className="flex items-center gap-2 text-xs text-slate-500 mb-4">
@@ -262,7 +261,6 @@ export default function Header() {
         </div>
       </section>
 
-      {/* SOLUTIONS SECTION */}
       <section
         id="solutions"
         className="bg-white py-20 md:py-24 border-y border-slate-100"
@@ -310,7 +308,6 @@ export default function Header() {
         </div>
       </section>
 
-      {/* FEATURES SECTION */}
       <section
         id="features"
         className="py-20 md:py-24 bg-[#f7f8fa]"
@@ -358,7 +355,6 @@ export default function Header() {
         </div>
       </section>
 
-      {/* CTA SECTION */}
       <section className="bg-[#102c4a] py-16 md:py-20">
 
         <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-10">

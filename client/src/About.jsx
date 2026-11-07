@@ -1,5 +1,6 @@
 
 import React from "react";
+import Creator from "../src/assets/DSC_0511.JPG"
 import {
   FaArrowRight,
   FaBullseye,
@@ -262,56 +263,56 @@ const AboutUs = () => {
         </div>
       </section>
 
-      {/* Creator */}
-      <section className="bg-slate-50 px-6 py-20 md:py-24">
-        <div className="mx-auto max-w-6xl">
-          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white md:grid md:grid-cols-5">
-            <div className="flex min-h-64 items-center justify-center bg-[#102c4a] p-10 text-white md:col-span-2">
-              <div className="text-center">
-                <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full border border-blue-300/40 bg-blue-300/10 text-4xl">
-                  <FaCode />
-                </div>
+{/* Creator Section */}
+<section className="bg-slate-50 px-6 py-20 md:py-24">
+  <div className="mx-auto max-w-6xl">
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white md:grid md:grid-cols-5">
 
-                <p className="mt-5 text-sm font-semibold uppercase tracking-widest text-blue-300">
-                  Developer & Creator
-                </p>
-              </div>
-            </div>
+      {/* Creator Image */}
+      <div className="relative min-h-[350px] overflow-hidden bg-[#102c4a] md:col-span-2 md:min-h-full">
+        <img
+          src={Creator}
+          alt="NIYOMUGABO Etiene"
+          className="absolute inset-0 h-full w-full object-cover object-[center_25%]"
+        />
+      </div>
 
-            <div className="p-8 md:col-span-3 md:p-12">
-              <p className="text-sm font-semibold uppercase tracking-widest text-blue-700">
-                The Person Behind The Project
-              </p>
+      {/* Creator Information */}
+      <div className="p-8 md:col-span-3 md:p-12">
+        <p className="text-sm font-semibold uppercase tracking-widest text-blue-700">
+          The Person Behind The Project
+        </p>
 
-              <h2 className="mt-4 text-3xl font-bold text-[#102c4a]">
-                NIYOMUGABO Etiene
-              </h2>
+        <h2 className="mt-4 text-3xl font-bold text-[#102c4a]">
+          NIYOMUGABO Etiene
+        </h2>
 
-              <p className="mt-5 leading-8 text-slate-600">
-                KAIROS AI was developed by NIYOMUGABO Etiene as a practical
-                exploration of machine learning, computer vision and
-                full-stack web development.
-              </p>
+        <p className="mt-5 leading-8 text-slate-600">
+          KAIROS AI was developed by NIYOMUGABO Etiene as a practical
+          exploration of machine learning, computer vision and
+          full-stack web development.
+        </p>
 
-              <p className="mt-4 leading-8 text-slate-600">
-                The goal is simple: keep learning, build useful technology,
-                and turn ideas into applications that people can actually
-                interact with.
-              </p>
+        <p className="mt-4 leading-8 text-slate-600">
+          The goal is simple: keep learning, build useful technology,
+          and turn ideas into applications that people can actually
+          interact with.
+        </p>
 
-              <a
-                href="https://niyomugaboetiene.vercel.app"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-7 inline-flex items-center gap-3 font-semibold text-[#35658e] transition hover:gap-5"
-              >
-                Visit my portfolio
-                <FaArrowRight />
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+        <a
+          href="https://niyomugaboetiene.vercel.app"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-7 inline-flex items-center gap-3 font-semibold text-[#35658e] transition-all duration-300 hover:gap-5"
+        >
+          Visit my portfolio
+          <FaArrowRight />
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
 
       {/* Project Scope */}
       <section className="px-6 py-16">

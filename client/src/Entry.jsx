@@ -1,3 +1,4 @@
+import AboutUs from "./About";
 import Home from "./Home";
 import HowItWorks from "./HowItWorks";
 
@@ -9,6 +10,9 @@ const Entry = () => {
            </section>
            <section id="home">
                 <HowItWorks />
+           </section>
+           <section id="about">
+                <AboutUs />
            </section>
         </>
     )
